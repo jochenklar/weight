@@ -1,0 +1,14 @@
+weight/settings/local.py
+
+static_root
+media_root
+bower_root
+
+*.pyc
+*~
+*.swp
+.DS_Store
+
+env
+
+*.sqlite3
