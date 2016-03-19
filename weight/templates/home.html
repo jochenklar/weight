@@ -1,0 +1,61 @@
+{% load staticfiles compress %}<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ request.site.name }}</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <meta property="og:title" content="{{ request.site.name }}" />
+    <meta property="og:url" content="{{ request.site.domain }}" />
+
+    <link rel="shortcut icon" href="{% static 'favicon.png' %}" type="image/png" />
+
+    {% compress css %}
+    <link rel="stylesheet" type="text/x-scss" href="{% static 'style.scss' %}" />
+    {% endcompress %}
+
+    <script src="{% static 'angular/angular.min.js' %}" ></script>
+    <script src="{% static 'd3/d3.min.js' %}" ></script>
+    <script src="{% static 'app.js' %}" ></script>
+</head>
+
+<body ng-app="weight" ng-controller="WeightController">
+
+    <div class="content" ng-hide="service.dialpad">
+        <canvas></canvas>
+    </div>
+    <div class="content" ng-show="service.dialpad">
+        <div class="display">
+            {$ service.data.string $}
+        </div>
+        <div class="dialpad">
+            <div class="row3">
+                <button ng-click="service.enterKey('7')">7</button>
+                <button ng-click="service.enterKey('8')">8</button>
+                <button ng-click="service.enterKey('9')">9</button>
+            </div>
+            <div class="row3">
+                <button ng-click="service.enterKey('4')">4</button>
+                <button ng-click="service.enterKey('5')">5</button>
+                <button ng-click="service.enterKey('6')">6</button>
+            </div>
+            <div class="row3">
+                <button ng-click="service.enterKey('1')">1</button>
+                <button ng-click="service.enterKey('2')">2</button>
+                <button ng-click="service.enterKey('3')">3</button>
+            </div>
+            <div class="row3">
+                <button ng-click="service.enterKey('.')">.</button>
+                <button ng-click="service.enterKey('0')">0</button>
+                <button ng-click="service.reset()">C</button>
+            </div>
+            <div class="row1">
+                <button ng-click="service.submit()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

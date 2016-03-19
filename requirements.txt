@@ -1,4 +1,6 @@
 Django==1.9
 djangorestframework
 django-filter
+django-libsass
+django-bower
 psycopg2

@@ -1,0 +1,66 @@
+$background-color: #404040;
+$dialpad-button-color: #404040;
+$dialpad-button-color-active: #808080;
+$font-color: #efefef;
+$dialpad-border-color: #efefef;
+
+$font-size: 64px;
+$font-color: #efefef;
+
+body {
+    background-color: $background-color;
+}
+canvas {
+    background-color: #FFFFFF;
+    width: 300px;
+    height: 300px;
+}
+.content {
+    background-color: $background-color;
+    color: $font-color;
+
+    width: 300px;
+    height: 400px;
+    margin: 0 auto;
+}
+
+.display {
+    height: 100px;
+    width: 300px;
+
+    text-align: center;
+
+    font-size: $font-size;
+    color: $font-color;
+    line-height: 100px;
+}
+
+.dialpad {
+    border: 1px solid $dialpad-border-color;
+}
+.dialpad button {
+    display: block;
+    margin: 0;
+    height: 100px;
+
+    font-size: $font-size;
+    color: $font-color;
+
+    border: 1px solid $dialpad-border-color;
+    border-radius: 0;
+
+    background-color: $dialpad-button-color;
+}
+.dialpad button:focus {
+   outline: 0;
+}
+.dialpad button:active {
+   background-color: $dialpad-button-color-active;
+}
+.dialpad .row3 button {
+    float: left;
+    width: 100px;
+}
+.dialpad .row1 button {
+    width: 300px;
+}
