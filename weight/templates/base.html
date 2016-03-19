@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% include 'base_head.html' %}
+</head>
+
+<body {% block bodyattr %}{% endblock %}>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{% url 'home' %}">{{ request.site.name }}</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-collapse">
+
+                {% block navextra %}{% endblock %}
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="{% url 'admin:index' %}">Admin</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+       <div class="content">
+
+        {% block content %}{% endblock %}
+
+        </div>
+    </div>
+
+</body>
+</html>

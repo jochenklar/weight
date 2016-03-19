@@ -3,4 +3,5 @@ djangorestframework
 django-filter
 django-libsass
 django-bower
+django-widget-tweaks
 psycopg2

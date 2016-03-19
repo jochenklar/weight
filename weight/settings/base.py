@@ -9,6 +9,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['localhost']
 
+SITE_ID = 1
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -16,9 +18,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'rest_framework',
     'compressor',
     'djangobower',
+    'widget_tweaks',
     'data'
 ]
 
@@ -31,6 +35,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware'
 ]
 
 ROOT_URLCONF = 'weight.urls'
@@ -71,7 +76,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Berlin'
 
 USE_I18N = True
 
@@ -103,7 +108,9 @@ COMPRESS_PRECOMPILERS = (
 BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'bower_root/')
 
 BOWER_INSTALLED_APPS = (
+    'jQuery',
     'angular',
+    'bootstrap',
     'd3'
 )
 

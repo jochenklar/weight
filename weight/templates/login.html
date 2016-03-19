@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <form action="/login/" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="/" />
+
+{% for field in form %}
+
+        <div class="form-group {{field.errors|yesno:"has-error,"}}">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% render_field field class="form-control" %}
+        </div>
+
+{% if field.errors %}
+
+        <div class="help-block error">
+            <p class="text-danger">{{ field.errors.as_text}}</p>
+        </div>
+
+{% endif %}
+
+{% endfor %}
+        <input class="btn btn-default" type="submit" value="Login" />
+    </form>
+{% endblock %}
