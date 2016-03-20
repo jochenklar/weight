@@ -6,6 +6,9 @@ $dialpad-button-color: #404040;
 $dialpad-button-color-active: #808080;
 
 $svg-background-color: #EFEFEF;
+$svg-data-color: red;
+$svg-axes-color: #404040;
+$svg-tics-color: #CCCCCC;
 
 $font-color: #efefef;
 $dialpad-border-color: #efefef;
@@ -66,4 +69,26 @@ button:focus {
 }
 button:active {
    background-color: $dialpad-button-color-active;
+}
+
+.axis path {
+    fill: none;
+    stroke: $svg-axes-color;
+    stroke-width: 2;
+}
+.axis line {
+    fill: none;
+    stroke: $svg-tics-color;
+    stroke-width: 1;
+}
+
+circle.data {
+    r: 3;
+    fill: $svg-data-color;
+}
+
+path.data {
+    fill: none;
+    stroke: $svg-data-color;
+    stroke-width: 1;
 }

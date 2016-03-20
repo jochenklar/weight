@@ -47,15 +47,17 @@ app.factory('WeightService', ['$http', '$timeout', function($http, $timeout) {
     }
 
     function draw() {
-        var svg = d3.select('svg');
-        svg.selectAll("*").remove();
+        d3.select('svg').selectAll("*").remove();
 
-        var margin = {top: 10, right: 10, bottom: 10, left: 50},
+        var margin = {top: 10, right: 10, bottom: 30, left: 50},
             width = 640 - margin.left - margin.right,
             height = 360 - margin.top - margin.bottom;
 
-        var xMin = new Date(data.points[0].datetime),
-            xMax = new Date(data.points[data.points.length - 1].datetime);
+        var xMin = new Date(Date.now());
+        xMin.setDate(xMin.getDate() - 14);
+
+        var xMax = new Date(Date.now());
+        xMax.setDate(xMax.getDate() + 1);
 
         var yMin = data.points.reduce(function(prev, curr) {
             return prev.weight < curr.weight ? prev : curr;
@@ -67,31 +69,39 @@ app.factory('WeightService', ['$http', '$timeout', function($http, $timeout) {
 
         var xScale = d3.time.scale.utc()
                         .domain([xMin, xMax])
-                        .range([margin.left, width + margin.left]),
+                        .range([0, width]),
             yScale = d3.scale.linear()
                         .domain([yMin, yMax])
-                        .range([height - margin.bottom, margin.top]);
+                        .range([height, 0]);
 
         var xAxis = d3.svg.axis().scale(xScale)
                         .orient('bottom')
-                        .ticks(d3.time.day, 1)
-                        .tickFormat(d3.time.format("%b %d")),
-            yAxis = d3.svg.axis().scale(yScale).orient('left');
+                        .ticks(d3.time.day)
+                        .tickSize(-height, 0)
+                        .tickFormat(d3.time.format("%m/%d")),
+            yAxis = d3.svg.axis().scale(yScale)
+                        .tickSize(0, 0)
+                        .orient('left');
+
+
+        var svg = d3.select('svg')
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         svg.append('g').call(xAxis)
-            .attr("transform", "translate(0," + (height - margin.bottom) + ")");
+            .attr('class', 'axis')
+            .attr('transform', 'translate(0,' + height + ')');
         svg.append('g').call(yAxis)
-            .attr("transform", "translate(" + (margin.left) + ")", 0);
+            .attr('class', 'axis')
+            .attr('transform', 'translate(0, 0)');
 
         svg.append('g').selectAll('circle')
             .data(data.points)
             .enter()
                 .append('circle')
-                .attr('class', 'circle')
+                .attr('class', 'data')
                 .attr('cx', function (d) { return xScale(new Date(d.datetime)); })
-                .attr('cy', function (d) { return yScale(d.weight); })
-                .attr('r', 5)
-                .style('fill', 'red');
+                .attr('cy', function (d) { return yScale(d.weight); });
 
         var line = d3.svg.line()
             .x(function (d) { return xScale(new Date(d.datetime)); })
@@ -100,9 +110,7 @@ app.factory('WeightService', ['$http', '$timeout', function($http, $timeout) {
 
         svg.append('g').append("path")
             .attr("d", line(data.points))
-            .attr("stroke", "red")
-            .attr("stroke-width", 2)
-            .attr("fill", "none");;
+            .attr('class', 'data');
     }
 
     return {
