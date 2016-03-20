@@ -1,12 +1,16 @@
 from rest_framework import viewsets, mixins, filters, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from .models import *
 from .serializers import *
 
 
-class DataPointViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
-    #permission_classes = (, )
+class DataPointViewSet(mixins.CreateModelMixin,
+                       mixins.ListModelMixin,
+                       mixins.RetrieveModelMixin,
+                       viewsets.GenericViewSet):
+    permission_classes = (IsAuthenticated, )
 
     queryset = DataPoint.objects.all()
     serializer_class = DataPointSerializer
