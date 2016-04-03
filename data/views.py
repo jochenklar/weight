@@ -1,3 +1,5 @@
+import iso8601
+
 from rest_framework import viewsets, mixins, filters, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -16,7 +18,13 @@ class DataPointViewSet(mixins.CreateModelMixin,
     serializer_class = DataPointSerializer
 
     def get_queryset(self):
-        return DataPoint.objects.filter(user=self.request.user)
+        queryset = self.queryset.filter(user=self.request.user)
+
+        after = self.request.GET.get('after')
+        if after:
+            queryset = queryset.filter(datetime__gt=iso8601.parse_date(after))
+
+        return queryset
 
     def create(self, request):
         serializer = self.get_serializer(data=request.data)

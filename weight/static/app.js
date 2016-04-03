@@ -15,10 +15,16 @@ app.factory('WeightService', ['$http', '$timeout', function($http, $timeout) {
         points: []
     };
 
+    var xMin = new Date(Date.now());
+    xMin.setDate(xMin.getDate() - 14);
+
+    var xMax = new Date(Date.now());
+    xMax.setDate(xMax.getDate() + 1);
+
     function canvas() {
         data.dialpad = false;
 
-        $http.get('/data/points/')
+        $http.get('/data/points/?after=' + xMin.toISOString())
             .success(function(points) {
                 data.points = points;
                 draw();
@@ -52,12 +58,6 @@ app.factory('WeightService', ['$http', '$timeout', function($http, $timeout) {
         var margin = {top: 10, right: 10, bottom: 30, left: 50},
             width = 640 - margin.left - margin.right,
             height = 360 - margin.top - margin.bottom;
-
-        var xMin = new Date(Date.now());
-        xMin.setDate(xMin.getDate() - 14);
-
-        var xMax = new Date(Date.now());
-        xMax.setDate(xMax.getDate() + 1);
 
         var yMin = data.points.reduce(function(prev, curr) {
             return prev.weight < curr.weight ? prev : curr;
@@ -106,7 +106,7 @@ app.factory('WeightService', ['$http', '$timeout', function($http, $timeout) {
         var line = d3.svg.line()
             .x(function (d) { return xScale(new Date(d.datetime)); })
             .y(function (d) { return yScale(d.weight); })
-            .interpolate("bundle");
+            .interpolate('basis');
 
         svg.append('g').append("path")
             .attr("d", line(data.points))

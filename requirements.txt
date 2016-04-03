@@ -5,3 +5,4 @@ django-libsass
 django-bower
 django-widget-tweaks
 psycopg2
+iso8601
