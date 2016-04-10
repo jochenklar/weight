@@ -9,61 +9,67 @@ app.config(['$httpProvider', '$interpolateProvider', function($httpProvider, $in
 
 app.factory('WeightService', ['$http', '$timeout', function($http, $timeout) {
 
-    var data = {
+    var service = {
         string: '',
-        dialpad: false,
-        points: []
+        dialpad: false
     };
 
-    var xMin = new Date(Date.now());
-    xMin.setDate(xMin.getDate() - 14);
+    var threeMonthAgo = new Date(Date.now());
+    threeMonthAgo.setDate(threeMonthAgo.getDate() - 90);
 
-    var xMax = new Date(Date.now());
-    xMax.setDate(xMax.getDate() + 1);
+    var twoWeeksAgo = new Date(Date.now());
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
 
-    function canvas() {
-        data.dialpad = false;
+    var tomorrow = new Date(Date.now());
+    tomorrow.setDate(tomorrow.getDate() + 0.5);
 
-        $http.get('/data/points/?after=' + xMin.toISOString())
-            .success(function(points) {
-                data.points = points;
-                draw();
-            });
-    }
+    service.canvas = function canvas() {
+        service.dialpad = false;
+        d3.select('svg').selectAll("*").remove();
 
-    function dialpad() {
-        data.dialpad = true;
-        reset();
-    }
+        service.draw('graph-two-weeks', twoWeeksAgo, tomorrow);
+        service.draw('graph-three-month', threeMonthAgo, tomorrow);
+    };
 
-    function enterKey(character) {
-        data.string += character;
-    }
+    service.showDialpad = function dialpad() {
+        service.dialpad = true;
+        service.reset();
+    };
 
-    function reset() {
-        data.string = '';
-    }
+    service.enterKey = function (character) {
+        service.string += character;
+    };
 
-    function submit() {
-        var weight = parseFloat(data.string);
+    service.reset = function () {
+        service.string = '';
+    };
+
+    service.submit = function () {
+        var weight = parseFloat(service.string);
         $http.post('/data/points/', {'weight': weight})
             .success(function(response) {
-                canvas();
+                service.canvas();
             });
-    }
+    };
 
-    function draw() {
-        d3.select('svg').selectAll("*").remove();
+    service.draw = function(canvasSelector, xMin, xMax) {
+        $http.get('/data/points/?after=' + xMin.toISOString())
+            .success(function(points) {
+                service.drawDiagram(canvasSelector, xMin, xMax, points);
+            });
+    };
+
+    service.drawDiagram = function(graphId, xMin, xMax, points) {
 
         var margin = {top: 10, right: 10, bottom: 30, left: 50},
             width = 640 - margin.left - margin.right,
-            height = 360 - margin.top - margin.bottom;
+            height = 400 - margin.top - margin.bottom;
 
-        var yMin = data.points.reduce(function(prev, curr) {
+        var yMin = points.reduce(function(prev, curr) {
             return prev.weight < curr.weight ? prev : curr;
         }).weight - 0.5;
 
-        var yMax = data.points.reduce(function(prev, curr) {
+        var yMax = points.reduce(function(prev, curr) {
             return prev.weight > curr.weight ? prev : curr;
         }).weight + 0.5;
 
@@ -74,17 +80,26 @@ app.factory('WeightService', ['$http', '$timeout', function($http, $timeout) {
                         .domain([yMin, yMax])
                         .range([height, 0]);
 
+        var ticks, tickFormat;
+        if (xMax - xMin > 2000000000) {
+            ticks = d3.time.month;
+            tickFormat = d3.time.format('%b');
+        } else {
+            ticks = d3.time.day;
+            tickFormat = d3.time.format('%a');
+        }
+
         var xAxis = d3.svg.axis().scale(xScale)
                         .orient('bottom')
-                        .ticks(d3.time.day)
+                        .ticks(ticks)
                         .tickSize(-height, 0)
-                        .tickFormat(d3.time.format("%m/%d")),
+                        .tickFormat(tickFormat),
             yAxis = d3.svg.axis().scale(yScale)
-                        .tickSize(0, 0)
+                        .tickSize(-width, 0)
                         .orient('left');
 
 
-        var svg = d3.select('svg')
+        var svg = d3.select('#' + graphId)
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -96,7 +111,7 @@ app.factory('WeightService', ['$http', '$timeout', function($http, $timeout) {
             .attr('transform', 'translate(0, 0)');
 
         svg.append('g').selectAll('circle')
-            .data(data.points)
+            .data(points)
             .enter()
                 .append('circle')
                 .attr('class', 'data')
@@ -109,18 +124,11 @@ app.factory('WeightService', ['$http', '$timeout', function($http, $timeout) {
             .interpolate('basis');
 
         svg.append('g').append("path")
-            .attr("d", line(data.points))
+            .attr("d", line(points))
             .attr('class', 'data');
-    }
-
-    return {
-        data: data,
-        canvas: canvas,
-        dialpad: dialpad,
-        enterKey: enterKey,
-        reset: reset,
-        submit: submit
     };
+
+    return service;
 }]);
 
 app.controller('WeightController', ['$scope', 'WeightService', function($scope, WeightService) {

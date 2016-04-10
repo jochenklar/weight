@@ -10,11 +10,9 @@
         <div class="container">
             <div class="navbar-header">
                 <a class="navbar-brand" href="{% url 'home' %}">{{ request.site.name }}</a>
+                {% block navextra %}{% endblock %}
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse">
-
-                {% block navextra %}{% endblock %}
-
                 <ul class="nav navbar-nav navbar-right">
                     <li>
                         <a href="{% url 'admin:index' %}">Admin</a>

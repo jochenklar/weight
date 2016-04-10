@@ -36,6 +36,14 @@ svg {
     border-radius: 4px;
 }
 
+.navbar-text a {
+    color: #9d9d9d;
+    text-decoration: none;
+}
+.navbar-text a:hover {
+    color: #fff;
+}
+
 .dialpad {
 
 }
@@ -83,7 +91,6 @@ button:active {
 }
 
 circle.data {
-    r: 3;
     fill: $svg-data-color;
 }
 
@@ -91,4 +98,12 @@ path.data {
     fill: none;
     stroke: $svg-data-color;
     stroke-width: 1;
+}
+
+#graph-two-weeks circle.data {
+    r: 3;
+}
+
+#graph-three-month circle.data {
+    r: 1;
 }
